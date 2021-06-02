@@ -2,10 +2,20 @@
 # yarn lockfile v1
 
 
+"@types/crypto-js@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.nlark.com/@types/crypto-js/download/@types/crypto-js-4.0.1.tgz?cache=0&sync_timestamp=1621240809383&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fcrypto-js%2Fdownload%2F%40types%2Fcrypto-js-4.0.1.tgz#3a4bd24518b0e6c5940da4e2659eeb2ef0806963"
+  integrity sha1-OkvSRRiw5sWUDaTiZZ7rLvCAaWM=
+
 crypto-js@^4.0.0:
   version "4.0.0"
   resolved "https://registry.nlark.com/crypto-js/download/crypto-js-4.0.0.tgz#2904ab2677a9d042856a2ea2ef80de92e4a36dcc"
   integrity sha1-KQSrJnep0EKFai6i74DekuSjbcw=
+
+resize-observer-polyfill@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.nlark.com/resize-observer-polyfill/download/resize-observer-polyfill-1.5.1.tgz?cache=0&sync_timestamp=1621254890078&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fresize-observer-polyfill%2Fdownload%2Fresize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
+  integrity sha1-DpAg3T0hAkRY1OvSfiPkAmmBBGQ=
 
 typescript@^4.3.2:
   version "4.3.2"

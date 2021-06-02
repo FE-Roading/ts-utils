@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "common typescript utils colection",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "build": "npx tsc"
   },
   "dependencies": {
-    "crypto-js": "^4.0.0"
+    "crypto-js": "^4.0.0",
+    "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.0.1",
     "typescript": "^4.3.2"
   },
   "engines": {
