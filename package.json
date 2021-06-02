@@ -1,0 +1,18 @@
+{
+  "name": "ts-utils",
+  "version": "1.0.0",
+  "description": "common typescript utils colection",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc"
+  },
+  "dependencies": {
+    "crypto-js": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  },
+  "engines": {
+    "node": "^12 || >=14"
+  }
+}
