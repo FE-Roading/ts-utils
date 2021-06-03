@@ -15,7 +15,7 @@ export function dataURLtoBlob(base64Buf: string): Blob {
   return new Blob([u8arr], { type: mime });
 }
 
-type PictureCompressOptionsType = {
+export type PictureCompressOptionsType = {
   width?: number;  // 图片宽
   height?: number;  // 图片高
   quality?: number;  // 图像质量
@@ -33,17 +33,24 @@ export function urlToBase64(url: string, options: PictureCompressOptionsType = {
 
     const img = new Image();
     img.crossOrigin = '';
-    img.onload = function () {
+    img.onload = () => {
       if (!canvas || !ctx) {
         return reject();
       }
-      canvas.height = options.height || img.height;
-      canvas.width = options.width || img.width;
-      ctx.drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL(options.mineType || 'image/png', options.quality || 1);
-      canvas = null;
-      resolve(dataURL);
-    };
+
+      try {
+        canvas.height = options.height || img.height;
+        canvas.width = options.width || img.width;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL(options.mineType || 'image/png', options.quality || 1);
+        canvas = null;
+        resolve(dataURL);
+      } catch (e) {
+        reject(e)
+      }
+    }
+
+    img.onerror = (e) => reject(e)
     img.src = url;
-  });
+  })
 }
