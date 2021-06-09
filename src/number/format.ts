@@ -1,3 +1,5 @@
+import { isNumber } from '../is';
+
 const RmbDigits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
 const SectionChars = ['', '拾', '佰', '仟', '万'];
 
@@ -107,3 +109,38 @@ export function formatMoney2Zh(price: number) {
 
   return sb.join('');
 };
+
+
+type NumFillWithCharType = {
+  decimals: number;  // 小数点位数
+  dot: string; 
+  separator: string; 
+  suffix: string; 
+  prefix: string; 
+}
+const defaultNumFillWithCharOptions: NumFillWithCharType = { 
+  decimals: 2, 
+  dot: '.', 
+  separator: ',', 
+  suffix: '', 
+  prefix: ''
+}
+
+
+export function numFillWithChar(num: number | string, options: NumFillWithCharType = {}): string {
+  const { decimals, dot, separator, suffix, prefix  } = Object.assign(defaultNumFillWithCharOptions, options)
+
+  num = Number(num).toFixed(decimals);
+  num += '';
+  const x = num.split('.');
+  let x1 = x[0];
+  const x2 = x.length > 1 ? dot + x[1] : '';
+  const rgx = /(\d+)(\d{3})/;
+  if (separator && !isNumber(separator)) {
+    while (rgx.test(x1)) {
+      x1 = x1.replace(rgx, '$1' + separator + '$2');
+    }
+  }
+
+  return prefix + x1 + x2 + suffix;
+}
