@@ -135,11 +135,13 @@ export function numFillWithChar(num: number | string, options: NumFillWithCharTy
   const x = num.split('.');
   let x1 = x[0];
   const x2 = x.length > 1 ? dot + x[1] : '';
-  const rgx = /(\d+)(\d{3})/;
   if (separator && !isNumber(separator)) {
-    while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + separator + '$2');
-    }
+    // 性能要差些，使用零宽断言优化
+    // const rgx = /(\d+)(\d{3})/;
+    // while (rgx.test(x1)) {
+    //   x1 = x1.replace(rgx, '$1' + separator + '$2');
+    // }
+    x1 = x1.replace(/\B(?=(\d{3})+\b)/g, separator)
   }
 
   return prefix + x1 + x2 + suffix;
