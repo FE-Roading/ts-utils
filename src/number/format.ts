@@ -1,3 +1,8 @@
+/**
+ * 第三方库： https://github.com/adamwdraper/Numeral-js
+ * A javascript library for formatting and manipulating numbers.
+ */
+
 import { isNumber } from '../is';
 
 const RmbDigits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
@@ -51,7 +56,7 @@ function parseInteger(sb: string[], integer: number, isFirstSection: boolean, ze
   return zeroCount;
 };
 
-export function formatMoney2Zh(price: number) {
+export function formatMoney2Zh(price: number): string {
   if (!price) return '';
 
   const sb: string[] = [];
