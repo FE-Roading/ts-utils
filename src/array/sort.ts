@@ -32,11 +32,13 @@ export function shuffle(arr: unknown[]): unknown[]{
  */
  export function shuffleKD(arr: unknown[]): unknown[]{
   const result: unknown[] = []
-  const totalLen = arr.length
+  const totalLen = arr.length - 1
   let activeLen = totalLen
 
   while(activeLen > 0) {
-    const index = randomInt(activeLen - 1)
+    // @ts-ignore
+    const index: number = randomInt(activeLen - 1)
+    // @ts-ignore
     [arr[totalLen], arr[index]] = [arr[index], arr[totalLen]]
 
     activeLen--

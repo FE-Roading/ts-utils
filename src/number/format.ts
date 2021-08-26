@@ -117,11 +117,11 @@ export function formatMoney2Zh(price: number): string {
 
 
 type NumFillWithCharType = {
-  decimals: number;  // 小数点位数
-  dot: string; 
-  separator: string; 
-  suffix: string; 
-  prefix: string; 
+  decimals?: number;  // 小数点位数
+  dot?: string; 
+  separator?: string; 
+  suffix?: string; 
+  prefix?: string; 
 }
 const defaultNumFillWithCharOptions: NumFillWithCharType = { 
   decimals: 2, 
