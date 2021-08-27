@@ -18,22 +18,6 @@ export function isObject(val: any): val is Record<any, any> {
   return val !== null && is(val, 'Object');
 }
 
-export function isEmpty<T = unknown>(val: T): val is T {
-  if (isArray(val) || isString(val)) {
-    return val.length === 0;
-  }
-
-  if (val instanceof Map || val instanceof Set) {
-    return val.size === 0;
-  }
-
-  if (isObject(val)) {
-    return Object.keys(val).length === 0;
-  }
-
-  return false;
-}
-
 export function isDate(val: unknown): val is Date {
   return is(val, 'Date');
 }
@@ -48,6 +32,27 @@ export function isNullAndUnDef(val: unknown): val is null | undefined {
 
 export function isNullOrUnDef(val: unknown): val is null | undefined {
   return isUnDef(val) || isNull(val);
+}
+
+export function isEmpty<T = unknown>(val: T): val is T {
+  if (isNullOrUnDef(val)) return true
+
+  // @ts-ignore
+  if (val === '') return true
+
+  if (isArray(val) || isString(val)) {
+    return val.length === 0;
+  }
+
+  if (val instanceof Map || val instanceof Set) {
+    return val.size === 0;
+  }
+
+  if (isObject(val)) {
+    return Object.keys(val).length === 0;
+  }
+
+  return false;
 }
 
 export function isNumber(val: unknown): val is number {
