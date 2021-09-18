@@ -3,118 +3,107 @@
  * A javascript library for formatting and manipulating numbers.
  */
 
-import { isNumber } from '../is';
+import { isNumber, isNullOrUnDef } from '../is';
 
-const RmbDigits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
-const SectionChars = ['', '拾', '佰', '仟', '万'];
+function parseIntegerPart(numStr: string, numStrs: string[], unitStrs: string[]): string {
+  if (!numStr) return ''
+  if (numStr === '') return numStrs[0]
 
-function parseDecimal(sb: string[], integerPart: number, decPart: number, zeroCount: number) {
-  const jiao = Math.floor(decPart / 10);
-  const fen = decPart % 10;
-
-  if (zeroCount > 0 && (jiao > 0 || fen > 0) && integerPart > 0) {
-    sb.push('零');
-  }
-
-  if (jiao > 0) {
-    sb.push(RmbDigits[jiao]);
-    sb.push('角');
-  }
-  if (zeroCount == 0 && jiao == 0 && fen > 0 && integerPart > 0) {
-    sb.push('零');
-  }
-  if (fen > 0) {
-    sb.push(RmbDigits[fen]);
-    sb.push('分');
-  } else {
-    sb.push('整');
-  }
-};
-
-function parseInteger(sb: string[], integer: number, isFirstSection: boolean, zeroCount: number) {
-  const nDigits = Math.floor(Math.log(integer + 0.5) / Math.log(10)) + 1;
-  if (!isFirstSection && integer < 1000) {
-    zeroCount++;
-  }
-
-  for (let i = 0; i < nDigits; i++) {
-    const factor = Math.floor(Math.pow(10, nDigits - 1 - i));
-    const digit = Math.floor(integer / factor);
-
-    if (digit != 0) {
-      if (zeroCount > 0) {
-        sb.push('零');
-      }
-      sb.push(RmbDigits[digit]);
-      sb.push(SectionChars[nDigits - i - 1]);
-      zeroCount = 0;
-    } else {
-      zeroCount++;
+  let unitIndex = 0,
+      resStr = '';
+  
+  for(let i = numStr.length - 1; i >= 0; i--) {
+    switch (unitIndex) {
+      case 0:
+        resStr += unitStrs[7]
+        break
+      
+      case 4:
+        if (!new RegExp("0{4}\\d{" + (numStr.length - i - 1) + "}$").test(numStr)) {
+          resStr += unitStrs[4]
+        }
+        break
+      
+      case 8:
+        resStr += unitStrs[5]
+        unitStrs[7] = unitStrs[5]
+        unitIndex = 0
+        break
+      
     }
-    integer -= Math.floor(integer / factor) * factor;
-  }
-  return zeroCount;
-};
 
-export function formatMoney2Zh(price: number): string {
-  if (!price) return '';
-
-  const sb: string[] = [];
-
-  const integerPart = Math.trunc(price);
-  const wanyiPart = Math.trunc(integerPart / 1000000000000);
-  const yiPart = (integerPart % 1000000000000) / 100000000;
-  const wanPart = Math.trunc((integerPart % 100000000) / 10000);
-  const qianPart = integerPart % 10000;
-  const decPart = Math.round((price * 100) % 100);
-
-  let zeroCount = 0;
-
-  //处理万亿以上的部分
-  if (integerPart >= 1000000000000 && wanyiPart > 0) {
-    zeroCount = parseInteger(sb, wanyiPart, true, zeroCount);
-    sb.push('万');
+    if (unitIndex % 4 == 2 && numStr[i + 2] !== '0' && numStr[i + 1] == '0') {
+      resStr += numStrs[0]
+    }
+    if (numStr[i] !== '0') {
+      resStr = numStrs[parseInt(numStr[i])] + unitStrs[unitIndex % 4] + resStr;
+    }
+    unitIndex++;
   }
 
-  //处理亿到千亿的部分
-  if (integerPart >= 100000000 && yiPart > 0) {
-    const isFirstSection =
-      integerPart >= 100000000 && integerPart < 1000000000000;
-    zeroCount = parseInteger(sb, yiPart, isFirstSection, zeroCount);
-    sb.push('亿');
-  }
+  return resStr
+}
 
-  //处理万的部分
-  if (integerPart >= 10000 && wanPart > 0) {
-    const isFirstSection = integerPart >= 1000 && integerPart < 10000000;
-    zeroCount = parseInteger(sb, wanPart, isFirstSection, zeroCount);
-    sb.push('万');
+ /**
+  * 将数字字符串转换为数值
+  * @param num 
+  * @returns 
+  */
+  function convertToNumStr(num: number | string): string {
+    // 如果是数值，则直接返回
+    if (isNumber(num)) {
+      num = '' + num
+    }
+    
+    if (isNullOrUnDef(num)) {
+      num = ''
+    }
+    
+    if (isNaN(Number(num))) {
+      num = Number(num).toString()
+    }
+  
+    return num
   }
+ 
+export function num2RMB(num: number | string): string {
+  const numStr = convertToNumStr(num)
 
-  //处理千及以后的部分
-  if (qianPart > 0) {
-    const isFirstSection = integerPart < 1000;
-    zeroCount = parseInteger(sb, qianPart, isFirstSection, zeroCount);
+  const [integerPart, decimalPart] = numStr.split('.')
+  const numStrs = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
+  const unitStrs = ["", "十", "百", "千", "万", "亿", "点", ""]
+
+  let resStr: string = parseIntegerPart(integerPart, numStrs, unitStrs)
+
+  if (!decimalPart || Number(decimalPart) < 0.01) {
+    resStr += '元整'
   } else {
-    zeroCount += 1;
+    resStr += '零'
+    resStr += numStrs[parseInt(decimalPart[0])] + '角'
+    if (decimalPart[1]) {
+      resStr += numStrs[parseInt(decimalPart[1])] + '分'
+    }
   }
 
-  if (integerPart > 0) {
-    sb.push('元');
+  return resStr
+}
+
+export function num2Chinese(num: number | string): string {
+  const numStr = convertToNumStr(num)
+
+  const [integerPart, decimalPart] = numStr.split('.')
+  const numStrs = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
+  const unitStrs = ["", "十", "百", "千", "万", "亿", "点", ""]
+
+  let resStr: string = parseIntegerPart(integerPart, numStrs, unitStrs)
+
+  if (decimalPart) {
+    resStr += unitStrs[6]
+    for (var i = 0; i < decimalPart.length; i++) resStr += numStrs[parseInt(decimalPart[i])];
   }
 
-  //处理小数
-  if (decPart > 0) {
-    parseDecimal(sb, integerPart, decPart, zeroCount);
-  } else if (decPart <= 0 && integerPart > 0) {
-    sb.push('整');
-  } else {
-    sb.push('零元整');
-  }
-
-  return sb.join('');
-};
-
+  return resStr
+}
 
 type NumFillWithCharType = {
   decimals?: number;  // 小数点位数
@@ -130,7 +119,6 @@ const defaultNumFillWithCharOptions: NumFillWithCharType = {
   suffix: '', 
   prefix: ''
 }
-
 
 export function numFillWithChar(num: number | string, options: NumFillWithCharType = {}): string {
   const { decimals, dot, separator, suffix, prefix  } = Object.assign(defaultNumFillWithCharOptions, options)
