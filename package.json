@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "npx tsc --target es6"
+    "build": "npx tsc --target es5"
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
